@@ -1,9 +1,11 @@
+"use client"
 import Image from "next/image";
+import Wrapper from "./components/Wrapper";
 
 export default function Home() {
   return (
-    <div className="">
+    <Wrapper>
       <button className="btn btn-sm">test</button>
-    </div>
+    </Wrapper>
   );
 }
