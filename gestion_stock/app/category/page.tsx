@@ -116,10 +116,10 @@ const page = () => {
                                 </div>
                                 <div className='flex gap-2'>
                                     <button className='btn btn-sm' onClick={() => openEditModal(category)}>
-                                        <Pencil className='w-4 h-4' />
+                                        <Pencil className='w-4 h-4' />Modifier
                                     </button>
                                     <button className='btn btn-sm btn-error' onClick={() => handleDeleteCategory(category.id)}>
-                                        <Trash className='w-4 h-4' />
+                                        <Trash className='w-4 h-4' />Supprimer
                                     </button>
                                 </div>
                             </div>

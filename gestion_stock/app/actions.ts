@@ -214,7 +214,7 @@ export async function deleteProduct(id: string, email: string) {
     }
 }
 
-export async function readProduct(email: string) : Promise<Product[]> {
+export async function readProduct(email: string) : Promise<Product[] | undefined> {
     try {
         if (!email) {
             throw new Error("Misy tsy ampy azafady (email requis)")
@@ -233,8 +233,42 @@ export async function readProduct(email: string) : Promise<Product[]> {
             }
         })
         return p.map(product => ({
-            ...product
+            ...product ,
+            categoryName : product.category?.name
         }))
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function readProductById(productId: string, email: string) : Promise<Product | undefined> {
+    try {
+        if (!email) {
+            throw new Error("Misy tsy ampy azafady (email requis)")
+        }
+        const association = await getAssociation(email)
+        if(!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        const product = await prisma.product.findUnique({
+            where : {
+                id : productId,
+                associationId: association.id
+            },
+            include : {
+                category: true
+            }
+        })
+        
+        if(!product) {
+            return undefined
+        }
+        
+        return {
+            ...product,
+            categoryName : product.category?.name
+        }
     } catch (error) {
         console.error(error)
     }
