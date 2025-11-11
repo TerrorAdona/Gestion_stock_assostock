@@ -4,13 +4,16 @@ import Wrapper from '../components/Wrapper'
 import { useUser } from '@clerk/nextjs'
 import { Category } from '@prisma/client'
 import { FormDataType } from '@/type'
-import { readCategory } from '../actions'
+import { createProduct, readCategory } from '../actions'
 import { FileImage } from 'lucide-react'
 import ProductImage from '../components/ProductImage'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 const page = () => {
   const { user } = useUser()
   const email = user?.primaryEmailAddress?.emailAddress as string
+  const router = useRouter()
 
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -21,6 +24,7 @@ const page = () => {
     price: 0,
     categoryId: "",
     unit: "",
+    imageUrl: ""
   })
 
   useEffect(() => {
@@ -50,6 +54,35 @@ const page = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData({ ...formData, [name]: value })
+  }
+
+  const handleSubmit = async () => {
+    if (!file) {
+      toast.error("Le sary adino namana ah")
+      return
+    }
+    try {
+      const imageData = new FormData()
+      imageData.append("file" ,file)
+      const res = await fetch("/api/upload" , {
+        method : "POST",
+        body : imageData
+      })
+      const data = await res.json()
+      if(!data.success) {
+        throw new Error("Erreur lors de l'upload de l'image.")
+      } else {
+        formData.imageUrl = data.path
+        await createProduct(
+          formData , email
+        )
+        toast.success("Vita soa aman-tsara")
+      }
+      router.push("/product")
+    } catch (error) {
+      console.log(error)
+      toast.error("Misy tsy mety namana ah")
+    }
   }
   return (
     <Wrapper>
@@ -111,7 +144,7 @@ const page = () => {
                 onChange={handleFileChange}
               />
 
-              <button className='btn btn-primary'>
+              <button onClick={handleSubmit} className='btn btn-primary'>
                 Créer le produit
               </button>
             </div>
