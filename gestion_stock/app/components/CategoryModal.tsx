@@ -41,7 +41,8 @@ const CategoryModal: React.FC<Props> = ({
                 />
                 <button
                     className='btn btn-primary'
-                    onClick={onSubmit}>
+                    onClick={onSubmit}
+                    disabled={loading}>
                         {
                             loading 
                                 ? editMode 

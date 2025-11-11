@@ -1,6 +1,6 @@
 "use client"
 
-import { ListTree, Icon, PackagePlus, Boxes, Menu, X } from 'lucide-react'
+import { ListTree, Icon, PackagePlus, Boxes, Menu, X, ShoppingBasket } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -17,7 +17,8 @@ const NavBar = () => {
     const [menuOpen, setmenuOpen] = useState(false)
 
     const navLinks = [
-        {href : "/category" , label : "Catégories" , icon: ListTree} 
+        {href : "/category" , label : "Catégories" , icon: ShoppingBasket} ,
+        {href : "/new-product" , label : "Nouveau produit" , icon: ListTree}
     ]
 
     useEffect(() => {

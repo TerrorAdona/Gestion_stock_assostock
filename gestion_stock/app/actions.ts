@@ -1,7 +1,8 @@
 "use server"
 
 import prisma from "@/lib/prisma"
-import { Category } from "@prisma/client"
+import { FormDataType } from "@/type"
+import { Category, Product } from "@prisma/client"
 
 export async function checkAndAddAssociation(email: string, name: string) {
     if (!email) return
@@ -128,6 +129,112 @@ export async function readCategory(email: string) : Promise<Category[] | undefin
             },
         })
         return cat
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function createProduct(formData : FormDataType, email : string){
+    try {
+        const {name, description , price , imageUrl, categoryId, unit} = formData
+        if (!email || !price || !categoryId) {
+            throw new Error("Misy tsy ampy azafady")
+        }
+        const safeImageUrl = imageUrl || ""
+        const safeUnit = unit || ""
+        const association = await getAssociation(email)
+        if(!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        await prisma.product.create({
+            data : {
+                name , 
+                description,
+                price : Number(price),
+                imageUrl : safeImageUrl,
+                categoryId,
+                unit : safeUnit,
+                associationId : association.id
+            }
+        }
+        )
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function updateProduct(formData : FormDataType, email : string) {
+    try {
+        const {id, name, description , price , imageUrl} = formData
+        if (!email || !price || !id) {
+            throw new Error("Misy tsy ampy azafady")
+        }
+        const association = await getAssociation(email)
+        if(!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        await prisma.product.update({
+            where : {
+                id : id,
+                associationId : association.id
+            },
+            data : {
+                name , 
+                description,
+                price : Number(price),
+                imageUrl : imageUrl
+            }
+        }
+        )
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function deleteProduct(id: string, email: string) {
+    try {
+        if (!id) {
+            throw new Error("Misy tsy ampy azafady")
+        }
+        const association = await getAssociation(email)
+        if(!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        await prisma.product.delete({
+            where : {
+                id : id,
+                associationId : association.id
+            }
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function readProduct(email: string) : Promise<Product[]> {
+    try {
+        if (!email) {
+            throw new Error("Misy tsy ampy azafady (email requis)")
+        }
+        const association = await getAssociation(email)
+        if(!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        const p = await prisma.product.findMany({
+            where : {
+                associationId : association.id
+            },
+            include : {
+                category: true
+            }
+        })
+        return p.map(product => ({
+            ...product
+        }))
     } catch (error) {
         console.error(error)
     }
