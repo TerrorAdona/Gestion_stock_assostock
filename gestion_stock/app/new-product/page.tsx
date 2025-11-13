@@ -77,8 +77,9 @@ const page = () => {
           formData, email
         )
         toast.success("Vita soa aman-tsara")
+        router.push("/products")
       }
-      router.push("/products")
+      
     } catch (error) {
       console.log(error)
       toast.error("Misy tsy mety namana ah")
