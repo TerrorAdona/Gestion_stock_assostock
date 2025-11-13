@@ -30,9 +30,9 @@ const page = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        if(email){
+        if (email) {
           const data = await readCategory(email)
-          if(data) {
+          if (data) {
             setCategories(data)
           }
         }
@@ -43,7 +43,7 @@ const page = () => {
     fetchCategories()
   }, [email])
 
-  const handleFileChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null
     setFile(selectedFile)
     if (selectedFile) {
@@ -63,22 +63,22 @@ const page = () => {
     }
     try {
       const imageData = new FormData()
-      imageData.append("file" ,file)
-      const res = await fetch("/api/upload" , {
-        method : "POST",
-        body : imageData
+      imageData.append("file", file)
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: imageData
       })
       const data = await res.json()
-      if(!data.success) {
+      if (!data.success) {
         throw new Error("Erreur lors de l'upload de l'image.")
       } else {
         formData.imageUrl = data.path
         await createProduct(
-          formData , email
+          formData, email
         )
         toast.success("Vita soa aman-tsara")
       }
-      router.push("/product")
+      router.push("/products")
     } catch (error) {
       console.log(error)
       toast.error("Misy tsy mety namana ah")
@@ -151,15 +151,15 @@ const page = () => {
             <div className='md:ml-4 md:w-[300px] mt-4 md:mt-0 border-2 border-primary md:h-[300px] p-5 flex justify-center items-center rounded-3xl'>
               {previewUrl && previewUrl !== "" ? (
                 <div>
-                  <ProductImage 
-                  src={previewUrl}
-                  alt='preview'
-                  heightClass='h-40'
-                  widthClass='w-40'/>
+                  <ProductImage
+                    src={previewUrl}
+                    alt='preview'
+                    heightClass='h-40'
+                    widthClass='w-40' />
                 </div>
               ) : (
                 <div className='wiggle-animation'>
-                  <FileImage strokeWidth={1} className='w-10 h-10 text-primary'/>
+                  <FileImage strokeWidth={1} className='w-10 h-10 text-primary' />
                 </div>
               )}
             </div>

@@ -214,7 +214,7 @@ export async function deleteProduct(id: string, email: string) {
     }
 }
 
-export async function readProduct(email: string) : Promise<Product[] | undefined> {
+export async function readProducts(email: string) : Promise<Product[] | undefined> {
     try {
         if (!email) {
             throw new Error("Misy tsy ampy azafady (email requis)")
