@@ -17,8 +17,10 @@ const NavBar = () => {
     const [menuOpen, setmenuOpen] = useState(false)
 
     const navLinks = [
-        {href : "/category" , label : "Catégories" , icon: ShoppingBasket} ,
+        {href : "/products" , label : "Liste des produits" , icon: ShoppingBasket},
+        {href : "/category" , label : "Catégories" , icon: PackagePlus} ,
         {href : "/new-product" , label : "Nouveau produit" , icon: ListTree}
+        
     ]
 
     useEffect(() => {
