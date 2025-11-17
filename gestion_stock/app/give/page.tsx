@@ -6,6 +6,8 @@ import { OrderItem, Product } from '@/type'
 import { readProducts } from '../actions'
 import ProductComponent from '../components/ProductComponent'
 import EmptyState from '../components/EmptyState'
+import ProductImage from '../components/ProductImage'
+import { Trash } from 'lucide-react'
 
 const page = () => {
 
@@ -74,6 +76,23 @@ const page = () => {
             return updateOrder
         })
     }
+
+    const handleQuantityChange = (productId: string, quantity: number) => {
+        setOrder((prevOrder) =>
+            prevOrder.map((item) =>
+                item.productId === productId ? { ...item, quantity } : item
+            )
+        )
+    }
+    const handleRemove = (productId: string) => {
+        setOrder((prevOrder) => {
+            const updateOrder = prevOrder.filter((item) => item.productId !== productId)
+            setSelectedProductIds((prevSelectedProductsIds) => prevSelectedProductsIds.filter((id) => id !== productId)
+            )
+            return updateOrder
+        }
+        )
+    }
     return (
         <Wrapper>
             <div className='flex md:flex-row flex-col-reverse'>
@@ -107,12 +126,48 @@ const page = () => {
                 <div className='md:w-2/3 p-4 md:ml-4 mb-4 md:mb-0 h-fit border-2 border-base-200 rounded-3xl overflow-x-auto'>
                     {order.length > 0 ? (
                         <div>
-                            tableau
+                            <table className='table w-full scroll-auto'>
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Nom</th>
+                                        <th>Quantité</th>
+                                        <th>Unité</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {order.map((item) => (
+                                        <tr key={item.productId}>
+                                            <td>
+                                                <ProductImage
+                                                    src={item.imageUrl}
+                                                    alt={item.imageUrl}
+                                                    heightClass='h-12'
+                                                    widthClass='w-12' />
+                                            </td>
+                                            <td>{item.name}</td>
+                                            <td><input type="number" value={item.quantity} min={1} className='input input-bordered w-20 mb-4' max={item.availableQuantity}
+                                                onChange={(e) => handleQuantityChange(item.productId, Number(e.target.value))}
+                                            /></td>
+                                            <td className='capitalize'>{item.unit}</td>
+                                            <td>
+                                                <button className='btn btn-sm btn-error' onClick={() => handleRemove(item.productId)}>
+                                                    <Trash className="w-4 h-4" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <button className="btn btn-primary mt-4 w-fit" onClick={handleSubmit}>
+                                Confirmer le don
+                            </button>
                         </div>
                     ) : (
                         <EmptyState
-                                    message='Aucun produit dans le panier'
-                                    IconComponent='HandHeart' />
+                            message='Aucun produit dans le panier'
+                            IconComponent='HandHeart' />
                     )}
                 </div>
             </div>
