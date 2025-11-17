@@ -1,8 +1,9 @@
 "use server"
 
 import prisma from "@/lib/prisma"
-import { FormDataType } from "@/type"
+import { FormDataType, OrderItem } from "@/type"
 import { Category, Product } from "@prisma/client"
+import { error } from "console"
 
 export async function checkAndAddAssociation(email: string, name: string) {
     if (!email) return
@@ -293,19 +294,78 @@ export async function replenishStockWithTransaction(productId: string, quantity:
                 associationId: association.id
             },
             data: {
-                quantity : {
-                    increment : quantity
+                quantity: {
+                    increment: quantity
                 }
             }
         })
         await prisma.transaction.create({
-            data : {
-                type : "IN",
-                quantity : quantity,
-                productId : productId,
-                associationId : association.id
+            data: {
+                type: "IN",
+                quantity: quantity,
+                productId: productId,
+                associationId: association.id
             }
         })
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function donStockTransaction(orderItems: OrderItem[], email: string) {
+    try {
+        if (!email) {
+            throw new Error("Misy tsy ampy azafady (email requis)")
+        }
+        const association = await getAssociation(email)
+        if (!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        for (const item of orderItems) {
+            const product = await prisma.product.findUnique({
+                where: { id: item.productId }
+            })
+
+            if (!product) {
+                throw new Error(`Produit avec l'ID ${item.productId} introuvable`)
+            }
+
+            if (item.quantity <= 0) {
+                throw new Error(`La quantité demandée pour "${product.name}" doit être supérieur à zéro`)
+            }
+
+            if (product.quantity < item.quantity) {
+                throw new Error(`Stock insuffisant. Reste de stock dispo : ${product.quantity}`)
+            }
+        }
+
+        await prisma.$transaction(async (tx) => {
+            for (const item of orderItems) {
+                await tx.product.update({
+                    where: {
+                        id: item.productId,
+                        associationId: association.id
+                    },
+                    data: {
+                        quantity: {
+                            decrement: item.quantity
+                        }
+                    }
+                })
+                await prisma.transaction.create({
+                    data: {
+                        type: "OUT",
+                        quantity: item.quantity,
+                        productId: item.productId,
+                        associationId: association.id
+                    }
+                })
+            }
+        })
+        return { success: true }
+
 
     } catch (error) {
         console.error(error)

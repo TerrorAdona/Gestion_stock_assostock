@@ -1,6 +1,6 @@
 "use client"
 
-import { ListTree, Icon, PackagePlus, Boxes, Menu, X, ShoppingBasket, Warehouse } from 'lucide-react'
+import { ListTree, Icon, PackagePlus, Boxes, Menu, X, ShoppingBasket, Warehouse, HandHeart } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -20,8 +20,8 @@ const NavBar = () => {
     const navLinks = [
         { href: "/products", label: "Liste des produits", icon: ShoppingBasket },
         { href: "/category", label: "Catégories", icon: PackagePlus },
-        { href: "/new-product", label: "Nouveau produit", icon: ListTree }
-
+        { href: "/new-product", label: "Nouveau produit", icon: ListTree },
+        { href: "/give", label: "Donner", icon: HandHeart }
     ]
 
     useEffect(() => {
