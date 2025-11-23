@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import { useUser } from '@clerk/nextjs'
 import { OrderItem, Product } from '@/type'
-import { readProducts } from '../actions'
+import { donStockTransaction, readProducts } from '../actions'
 import ProductComponent from '../components/ProductComponent'
 import EmptyState from '../components/EmptyState'
 import ProductImage from '../components/ProductImage'
 import { Trash } from 'lucide-react'
+import { toast } from 'react-toastify'
 
 const page = () => {
 
@@ -92,6 +93,27 @@ const page = () => {
             return updateOrder
         }
         )
+    }
+
+    const handleSubmit = async () => {
+        try {
+            if (order.length == 0) {
+                toast.error("Veuiller ajouter des produits à la commande")
+                return
+            }
+            const response = await donStockTransaction(order, email)
+
+            if (response?.success) {
+                toast.success("Don confirmé avec succès")
+                setOrder([])
+                setSelectedProductIds([])
+                fetchProducts()
+            } else {
+                toast.error(`${response?.message}`)
+            }
+        } catch (error) {
+            console.error(error)
+        }
     }
     return (
         <Wrapper>

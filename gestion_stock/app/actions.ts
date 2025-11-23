@@ -353,8 +353,8 @@ export async function donStockTransaction(orderItems: OrderItem[], email: string
                             decrement: item.quantity
                         }
                     }
-                })
-                await prisma.transaction.create({
+                });
+                await tx.transaction.create({
                     data: {
                         type: "OUT",
                         quantity: item.quantity,
@@ -369,5 +369,6 @@ export async function donStockTransaction(orderItems: OrderItem[], email: string
 
     } catch (error) {
         console.error(error)
+        return { success: false, message: error }
     }
 }
