@@ -1,6 +1,6 @@
 "use client"
 
-import { ListTree, Icon, PackagePlus, Boxes, Menu, X, ShoppingBasket, Warehouse, HandHeart, Receipt } from 'lucide-react'
+import { ListTree, Icon, PackagePlus, Boxes, Menu, X, ShoppingBasket, Warehouse, HandHeart, Receipt, LayoutDashboard } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -18,6 +18,7 @@ const NavBar = () => {
     const [menuOpen, setmenuOpen] = useState(false)
 
     const navLinks = [
+        { href: "/", label: "Tableau de bord", icon: LayoutDashboard },
         { href: "/products", label: "Liste des produits", icon: ShoppingBasket },
         { href: "/category", label: "Catégories", icon: PackagePlus },
         { href: "/new-product", label: "Nouveau produit", icon: ListTree },
@@ -60,7 +61,7 @@ const NavBar = () => {
                     <div className='p-2'>
                         <Boxes className='h-6 w-6 text-primary' />
                     </div>
-                    <span className='text-xl'>Stockeo<span className='text-error font-bold'>Izy</span></span>
+                    <span className='text-xl mr-5'>Stockeo<span className='text-error font-bold'>Izy</span></span>
                 </div>
 
                 <button className='btn w-fit sm:hidden btn-sm' onClick={() => setmenuOpen(!menuOpen)}>

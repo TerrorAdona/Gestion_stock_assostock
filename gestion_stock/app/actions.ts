@@ -1,7 +1,7 @@
 "use server"
 
 import prisma from "@/lib/prisma"
-import { FormDataType, OrderItem, Transaction } from "@/type"
+import { FormDataType, OrderItem, ProductOverviewStats, Transaction } from "@/type"
 import { Category, Product } from "@prisma/client"
 import { error } from "console"
 
@@ -406,10 +406,70 @@ export async function getTransactions(email: string, limit?: number): Promise<Tr
             productName: tx.product.name,
             imageUrl: tx.product.imageUrl,
             price: tx.product.price,
-            unit : tx.product.unit,
+            unit: tx.product.unit,
         }))
     } catch (error) {
         console.error(error)
         return []
+    }
+}
+
+export async function getProductOverviewStats(email: string): Promise<ProductOverviewStats> {
+    try {
+        if (!email) {
+            throw new Error("Misy tsy ampy azafady (email requis)")
+        }
+        const association = await getAssociation(email)
+        if (!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        const products = await prisma.product.findMany({
+            where: {
+                associationId: association.id
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            include: {
+                category: true
+            }
+        })
+        const transactions = await prisma.transaction.findMany(
+            {
+                where: {
+                    associationId: association.id
+                },
+            })
+        const categoriesSet = new Set(products.map((product) => product.category.name))
+        const totalProducts = products.length
+        const totalCategories = categoriesSet.size
+        const totalTransactions = transactions.length
+        const stockValue = products.reduce((acc, product) => {
+            return acc + product.price * product.quantity
+        }, 0)
+
+        return {
+            totalProducts,
+            totalCategories,
+            totalTransactions,
+            stockValue,
+        }
+        // return transactions.map((tx) => ({
+        //     ...tx,
+        //     categoryName: tx.product.category.name,
+        //     productName: tx.product.name,
+        //     imageUrl: tx.product.imageUrl,
+        //     price: tx.product.price,
+        //     unit: tx.product.unit,
+        // }))
+    } catch (error) {
+        console.error(error)
+        return {
+            totalProducts : 0,
+            totalCategories : 0,
+            totalTransactions : 0,
+            stockValue : 0,
+        }
     }
 }
