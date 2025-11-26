@@ -466,10 +466,51 @@ export async function getProductOverviewStats(email: string): Promise<ProductOve
     } catch (error) {
         console.error(error)
         return {
-            totalProducts : 0,
-            totalCategories : 0,
-            totalTransactions : 0,
-            stockValue : 0,
+            totalProducts: 0,
+            totalCategories: 0,
+            totalTransactions: 0,
+            stockValue: 0,
         }
+    }
+}
+
+export async function getProductCategoryDistribution(email: string) {
+    try {
+        if (!email) {
+            throw new Error("Misy tsy ampy azafady (email requis)")
+        }
+        const association = await getAssociation(email)
+        if (!association) {
+            throw new Error("Aucune association trouvée avec cet email.")
+        }
+
+        const R = 5
+
+        const categoriesWithProductCount = await prisma.category.findMany({
+            where: {
+                associationId: association.id
+            },
+            include: {
+                products: {
+                    select: {
+                        id: true
+                    }
+                }
+            }
+        })
+
+        const data = categoriesWithProductCount.map((category) => (
+            {
+                name: category.name,
+                value: category.products.length
+            }
+        ))
+        .sort((a , b) => b.value - a.value)
+        .slice(0, R)
+
+        return data
+
+    } catch (error) {
+        console.error(error)
     }
 }

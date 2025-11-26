@@ -3,6 +3,7 @@ import Image from "next/image";
 import Wrapper from "./components/Wrapper";
 import { useUser } from "@clerk/nextjs";
 import ProductOverview from "./components/ProductOverview";
+import CategoryChart from "./components/CategoryChart";
 
 export default function Home() {
 
@@ -16,6 +17,7 @@ export default function Home() {
           <ProductOverview 
           email={email}
           />
+          <CategoryChart email={email}/>
         </div>
       </div>
     </Wrapper>

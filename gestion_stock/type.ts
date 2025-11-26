@@ -40,3 +40,8 @@ export interface ProductOverviewStats {
     totalTransactions: number;
     stockValue: number;
 }
+
+export interface ChartData {
+    name : string,
+    value : number,
+}
