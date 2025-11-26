@@ -1,4 +1,5 @@
 import { Product as PrismaProduct} from "@prisma/client"
+import { Transaction as PrismaTransaction} from "@prisma/client"
 
 export interface Product extends PrismaProduct {
     categoryName: string;
@@ -24,3 +25,11 @@ export interface OrderItem {
     name: string;
     availableQuantity: number;
 };
+
+export interface Transaction extends PrismaTransaction {
+    categoryName: string;
+    productName: string;
+    imageUrl?: string;
+    price: number;
+    unit: string;
+}
