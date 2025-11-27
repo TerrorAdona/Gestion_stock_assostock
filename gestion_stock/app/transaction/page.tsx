@@ -121,7 +121,7 @@ const page = () => {
               setDateForm("")
               setDateTo("")
             }}>
-              <RotateCcw className='h-4 w-4'/>
+              <RotateCcw className='h-4 w-4' />
             </button>
           </div>
         </div>
@@ -147,7 +147,7 @@ const page = () => {
         <div className="join mt-2.5">
           <button
             className="join-item btn"
-            onClick={() => setCurrentPage((p) => Math.max(1, p-1))}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}>
             «
           </button>
@@ -157,7 +157,7 @@ const page = () => {
           </button>
           <button
             className="join-item btn"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p+1))}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}>
             »
           </button>
