@@ -47,8 +47,8 @@ const NavBar = () => {
             })}
 
             <button className="btn btn-sm" onClick={() => (document.getElementById('my_modal_stock') as HTMLDialogElement).showModal()}>
-                <Warehouse 
-                className='h-4 w-4'/>
+                <Warehouse
+                    className='h-4 w-4' />
                 Alimenter le Stock
             </button>
         </>
@@ -71,6 +71,7 @@ const NavBar = () => {
                 <div className='hidden space-x-2 sm:flex items-center'>
                     {renderLinks("btn")}
                     <UserButton />
+
                 </div>
             </div>
 
